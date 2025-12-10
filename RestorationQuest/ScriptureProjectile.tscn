@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://44y1oobblg0a"]
+
+[ext_resource type="Script" uid="uid://cv2j5owqyw3em" path="res://ScriptureProjectile.gd" id="1_j3myb"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_nhr7l"]
+size = Vector2(8, 4)
+
+[sub_resource type="Gradient" id="Gradient_1tqdq"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_vth4w"]
+gradient = SubResource("Gradient_1tqdq")
+fill_from = Vector2(0, 0.5)
+fill_to = Vector2(1, 0.5)
+metadata/_snap_enabled = true
+
+[node name="ScriptureProjectile" type="Node2D"]
+script = ExtResource("1_j3myb")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_nhr7l")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("GradientTexture2D_vth4w")
