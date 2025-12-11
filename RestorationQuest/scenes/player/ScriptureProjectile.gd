@@ -12,6 +12,6 @@ func _physics_process(delta):
 		queue_free()
 
 func _on_hit(body):
-	if body.is_in_group("enemies"):
+	if body.is_in_group("boss") or body.is_in_group("enemies"):
 		body.take_damage(damage)
 	queue_free()

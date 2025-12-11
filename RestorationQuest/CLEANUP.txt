@@ -1,0 +1,19 @@
+CLEANUP NOTES
+=============
+
+To resolve UID duplicate warnings, the following root-level files should be DELETED from the project:
+
+1. /player.gd
+2. /player.tscn
+3. /ScriptureProjectile.gd
+4. /ScriptureProjectile.tscn
+
+These have been replaced by:
+- /scenes/player/player.gd
+- /scenes/player/player.tscn
+- /scenes/player/ScriptureProjectile.gd
+- /scenes/player/ScriptureProjectile.tscn
+
+All projects files have been updated to reference the new paths.
+
+After deleting these files, restart Godot to clear the UID cache.

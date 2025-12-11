@@ -1,3 +1,21 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+# Editor and IDE files
+.history/
+*.uid
+*.import
+
+# Old/deprecated files (moved to scenes/player/)
+/player.gd
+/player.tscn
+/ScriptureProjectile.gd
+/ScriptureProjectile.tscn
+
+# Legacy script files (kept for reference but not used)
+/scripts/boss.gd
+/scripts/enemy.gd
+
+# Build outputs
+/builds/
+/exports/

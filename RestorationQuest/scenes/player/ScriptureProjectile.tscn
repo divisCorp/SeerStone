@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://44y1oobblg0a"]
 
-[ext_resource type="Script" uid="uid://cv2j5owqyw3em" path="res://ScriptureProjectile.gd" id="1_j3myb"]
+[ext_resource type="Script" path="res://scenes/player/ScriptureProjectile.gd" id="1_j3myb"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_nhr7l"]
 size = Vector2(8, 4)
@@ -21,3 +21,6 @@ shape = SubResource("RectangleShape2D_nhr7l")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture = SubResource("GradientTexture2D_vth4w")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+
