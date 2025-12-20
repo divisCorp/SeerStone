@@ -52,13 +52,11 @@ func _ready():
 		anim_sprite.sprite_frames = frames
 		anim_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 		anim_sprite.centered = true
+		anim_sprite.offset = Vector2.ZERO
 		
-		# Adjust offset so feet are at player origin point (ground level)
-		if frames.has_animation("idle") and frames.get_frame_count("idle") > 0:
-			var tex = frames.get_frame_texture("idle", 0)
-			if tex:
-				# Position sprite so bottom is at origin
-				anim_sprite.offset.y = -tex.get_size().y
+		# Position sprite so feet align with character origin
+		# The sprite should be positioned above the origin point
+		anim_sprite.position = Vector2(0, -16)
 		
 		anim_sprite.animation = "idle"
 		anim_sprite.play()

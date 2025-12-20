@@ -25,11 +25,10 @@ func _ready():
 		var frames: SpriteFrames = SpriteFrames.new()
 		
 		# Define animations and their frame counts
-		# Using single frames for now to avoid sprite bleeding issues
 		var animations = {
-			"idle": 1,
-			"walk": 1,
-			"jump": 1,
+			"idle": 1,     # Use only first idle frame to prevent "moving" look
+			"walk": 2,     # Use only 2 walk frames to avoid overlap
+			"jump": 1,     # Use only 1 jump frame
 			"attack": 1
 		}
 		
@@ -51,14 +50,13 @@ func _ready():
 		
 		anim_sprite.sprite_frames = frames
 		anim_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		anim_sprite.centered = true
 		
-		# Adjust offset so feet are at player origin point (ground level)
+		# Align feet to ground
 		if frames.has_animation("idle") and frames.get_frame_count("idle") > 0:
 			var tex = frames.get_frame_texture("idle", 0)
 			if tex:
-				# Position sprite so bottom is at origin
-				anim_sprite.offset.y = -tex.get_size().y
+				var h = tex.get_size().y
+				anim_sprite.offset.y = -h * 0.5
 		
 		anim_sprite.animation = "idle"
 		anim_sprite.play()

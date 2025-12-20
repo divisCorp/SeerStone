@@ -1,21 +1,45 @@
 # Godot 4+ specific ignores
 .godot/
 /android/
+/builds/
+/exports/
+/export/
+
 # Editor and IDE files
 .history/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Godot auto-generated
 *.uid
 *.import
+.godot/mono/temp/
 
-# Old/deprecated files (moved to scenes/player/)
+# Build outputs
+*.exe
+*.app
+*.x86_64
+*.zip
+*.pck
+
+# Legacy/deprecated files (kept for reference)
 /player.gd
 /player.tscn
 /ScriptureProjectile.gd
 /ScriptureProjectile.tscn
-
-# Legacy script files (kept for reference but not used)
 /scripts/boss.gd
 /scripts/enemy.gd
 
-# Build outputs
-/builds/
-/exports/
+# Python build artifacts
+__pycache__/
+*.py[cod]
+*.egg-info/
+/venv/
+/env/
+
+# OS files
+Thumbs.db

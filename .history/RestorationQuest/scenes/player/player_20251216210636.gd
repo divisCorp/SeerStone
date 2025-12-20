@@ -19,52 +19,41 @@ var vine_angular_velocity := 0.0
 @onready var anim_sprite: AnimatedSprite2D = $AnimatedSprite2D if has_node("AnimatedSprite2D") else null
 
 func _ready():
-	# Load sprite animations from individual frames
+	# Load sprite
 	anim_sprite = $AnimatedSprite2D if has_node("AnimatedSprite2D") else null
 	if anim_sprite:
 		var frames: SpriteFrames = SpriteFrames.new()
 		
-		# Define animations and their frame counts
-		# Using single frames for now to avoid sprite bleeding issues
-		var animations = {
-			"idle": 1,
-			"walk": 1,
-			"jump": 1,
-			"attack": 1
-		}
-		
-		# Load each animation
-		for anim_name in animations.keys():
-			frames.add_animation(anim_name)
-			var frame_count = animations[anim_name]
-			
-			for i in range(frame_count):
-				var frame_path = "res://assets/sprites/player_frames/%s_frame_%02d.png" % [anim_name, i]
-				if ResourceLoader.exists(frame_path):
-					var texture = load(frame_path) as Texture2D
-					if texture:
-						frames.add_frame(anim_name, texture)
-		
-		# Set walk animation FPS
-		frames.set_animation_speed("walk", 8.0)
-		frames.set_animation_speed("idle", 4.0)
-		
-		anim_sprite.sprite_frames = frames
-		anim_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
-		anim_sprite.centered = true
-		
-		# Adjust offset so feet are at player origin point (ground level)
-		if frames.has_animation("idle") and frames.get_frame_count("idle") > 0:
-			var tex = frames.get_frame_texture("idle", 0)
-			if tex:
-				# Position sprite so bottom is at origin
-				anim_sprite.offset.y = -tex.get_size().y
-		
-		anim_sprite.animation = "idle"
-		anim_sprite.play()
-		
-		if not anim_sprite.is_connected("animation_finished", Callable(self, "_on_sprite_animation_finished")):
-			anim_sprite.connect("animation_finished", Callable(self, "_on_sprite_animation_finished"))
+		# Load the new sprite
+		var sprite_path := "res://assets/sprites/JospehSprite.png"
+		if ResourceLoader.exists(sprite_path):
+			var texture = load(sprite_path) as Texture2D
+			if texture:
+				# Create basic animations using the single sprite
+				frames.add_animation("idle")
+				frames.add_animation("walk")
+				frames.add_animation("jump")
+				frames.add_animation("attack")
+				
+				# For now, use the same sprite for all animations
+				# TODO: Split sprite sheet if it contains multiple frames
+				frames.add_frame("idle", texture)
+				frames.add_frame("walk", texture)
+				frames.add_frame("jump", texture)
+				frames.add_frame("attack", texture)
+				
+				anim_sprite.sprite_frames = frames
+				anim_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+				
+				# Align feet to ground
+				var h = texture.get_size().y
+				anim_sprite.offset.y = -h * 0.30
+				
+				anim_sprite.animation = "idle"
+				anim_sprite.play()
+				
+				if not anim_sprite.is_connected("animation_finished", Callable(self, "_on_sprite_animation_finished")):
+					anim_sprite.connect("animation_finished", Callable(self, "_on_sprite_animation_finished"))
 
 func _physics_process(delta):
 	if on_vine:

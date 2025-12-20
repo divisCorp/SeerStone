@@ -1,87 +1,145 @@
-# Restoration Quest — Godot 2D Prototype
+# Restoration Quest
 
-A seven-level platformer inspired by Joseph Smith's restoration history. Each level features unique mechanics, challenges, and boss encounters tied to key historical events.
+> A seven-level platformer where you play as a pixel-art Joseph Smith, swinging on sacred vines, building faith through prayer, and defeating historical bosses.
 
-## Folder Structure
+![Restoration Quest Banner](https://via.placeholder.com/800x300?text=Restoration+Quest)
 
-```
-RestorationQuest/
-├── scenes/
-│   ├── Main.tscn                    # Entry point; press 1-7 to load levels
-│   ├── player/                      # Player character & projectile
-│   │   ├── player.tscn
-│   │   ├── player.gd
-│   │   ├── ScriptureProjectile.tscn
-│   │   └── ScriptureProjectile.gd
-│   ├── levels/                      # Level scenes (Level1.tscn ... Level7.tscn)
-│   ├── enemies/                     # Boss scenes (Boss1.tscn ... Boss7.tscn + Beam.tscn)
-│   └── objects/                     # Mechanic objects (PillarOfLight.tscn)
-├── scripts/
-│   ├── Main.gd                      # Scene loader
-│   ├── levels/
-│   │   ├── LevelBase.gd             # Base level class; spawns player, ground, mechanics
-│   │   ├── Level1.gd ... Level7.gd  # Per-level configurations
-│   ├── bosses/
-│   │   ├── BossBase.gd              # Boss base with health & vulnerability
-│   │   └── Boss1.gd ... Boss7.gd    # Per-boss AI and attacks
-│   ├── enemies/
-│   │   └── beam.gd                  # Beam projectile (Boss1 attack)
-│   └── mechanics/
-│       ├── vine_swing.gd            # Vine grappling mechanic
-│       ├── pillar_of_light.gd       # Prayer pillar (reveals boss vulnerability)
-│       ├── floating_platform.gd     # Moroni-level moving platforms
-│       ├── dig_zone.gd              # Hill Cumorah dig minigame
-│       ├── press_puzzle.gd          # Printer's Press jump puzzle
-│       ├── swim_zone.gd             # Fayette baptism swim areas
-│       ├── temple_climb.gd          # Kirtland temple climbing
-│       └── wagon_platform.gd        # Nauvoo wagon platforms
-├── project.godot
-└── README.md
+## 🎮 Quick Start
+
+### Play Now
+
+- 🌐 **Web**: [Play in browser](https://restorationquest.com) _(coming soon)_
+- 📥 **Download**: [Windows](https://github.com/divisCorp/SeerStone/releases) | [macOS](https://github.com/divisCorp/SeerStone/releases) | [Linux](https://github.com/divisCorp/SeerStone/releases)
+
+### Run Locally
+
+```bash
+# Clone & open in Godot 4
+git clone https://github.com/divisCorp/SeerStone.git
+cd RestorationQuest
+godot .
+
+# Then press F5 to play
 ```
 
-## How to Run
+## 🎯 Gameplay
 
-1. **Open in Godot 4** (requires Godot 4.x)
-2. **Set Main scene**: Open `scenes/Main.tscn` and set it as the main scene
-3. **Press 1-7 to load levels**:
-   - Level 1: Sacred Grove (Vines + Pillar Boss)
-   - Level 2: Moroni's Visits (Floating Platforms)
-   - Level 3: Hill Cumorah (Dig Minigame)
-   - Level 4: Printer's Press (Press Puzzles)
-   - Level 5: Fayette Church (Swim Zones + Mob Chase)
-   - Level 6: Kirtland Temple (Temple Climb)
-   - Level 7: Nauvoo Exodus (Wagon Platforms)
+### Controls
 
-## Controls
+| Input | Action |
+|-------|--------|
+| **← →** | Move |
+| **Space** | Jump / Detach from vine |
+| **Z** | Pray (build faith) |
+| **X** | Attack (shoot scripture) |
+| **1–7** | Jump to a level |
 
-- **Arrow Keys**: Move left/right
-- **Space**: Jump / Detach from vine
-- **X**: Attack (shoot scripture projectile)
-- **Z**: Pray (build faith; required to reveal boss vulnerability)
+### Core Mechanic
 
-## Level 1 Walkthrough (Sacred Grove)
+1. **Explore** levels by moving, jumping, and swinging on vines
+2. **Build Faith** by standing near prayer pillars and holding **Z**
+3. **Reveal Boss Vulnerability** — when faith is high enough, the boss becomes vulnerable (golden flash)
+4. **Attack & Defeat** — press **X** to shoot scripture projectiles and drain the boss's health
+5. **Progress** to the next level and repeat
 
-1. Use vines to swing across pits
-2. Build faith by holding **Z** near the Pillar of Light
-3. When boss becomes vulnerable (golden flash), attack with **X**
-4. Defeat the boss by draining its health to zero
-5. Boss shrinks and fades on defeat
+### Seven Levels of Restoration History
 
-## Features Implemented
+| # | Level | Theme | Primary Mechanic |
+|---|-------|-------|------------------|
+| 🌲 | Sacred Grove | First Vision | Vine swinging + Prayer |
+| 👼 | Moroni's Visits | Angel encounters | Floating platforms |
+| ⛰️ | Hill Cumorah | Golden plates | Dig minigame _(in progress)_ |
+| 🖨️ | Printer's Press | Book restoration | Press puzzles _(in progress)_ |
+| 💧 | Fayette Church | Organized church | Swim zones _(in progress)_ |
+| 🏛️ | Kirtland Temple | Holy temple | Climb mechanic _(in progress)_ |
+| 🛤️ | Nauvoo Exodus | Persecution escape | Wagon platforms _(in progress)_ |
 
-✅ Player with grappling vine mechanics  
-✅ 7 level scenes with unique mechanics  
-✅ Boss base with vulnerability system  
-✅ Beam attacks, pit hazards, death animations  
-✅ Prayer pillar for boss reveal mechanic  
-✅ Faith bar UI  
-✅ Scripture projectile attacks
+## ✨ Features
 
-## Next Steps
+- **Pixel-art Joseph Smith** — Smoothly animated across 4 animation states (idle, walk, jump, attack)
+- **7 Unique Levels** — Each with distinct visuals, hazards, and mechanics
+- **Boss Battles** — Encounter unique bosses tied to historical events
+- **Dynamic HUD** — Faith bar tracks spiritual power; essential for victory
+- **Godot 4** — Built on modern, open-source game engine
+- **Full Source** — Modify levels, bosses, and mechanics freely
 
-- Add sprite graphics for player, bosses, and UI
-- Implement audio feedback for attacks and level transitions
-- Expand boss AI for levels 2-7
-- Add level-complete screens and progression tracking
-- Polish collision and camera behavior
+## 🛠️ Development
+
+### For Game Designers & Developers
+
+See [**BUILDING.md**](BUILDING.md) for:
+- 💻 Local development setup
+- 🎮 Running & testing locally
+- 📦 Building for Windows/Mac/Linux
+- 🎨 Customizing levels, bosses, and mechanics
+- 🎬 Animation system & frame extraction
+
+### Project Status
+
+| Component | Status |
+|-----------|--------|
+| Core gameplay | ✅ Complete |
+| Level 1 (Sacred Grove) | ✅ Complete |
+| Player animations | ✅ Complete |
+| Boss 1 AI | ✅ Complete |
+| Levels 2–7 | 🔄 ~60% Complete |
+| Bosses 2–7 AI | 🔄 ~30% Complete |
+| Audio / Music | ⏳ Planned |
+| End-game screens | ⏳ Planned |
+
+## 📋 System Requirements
+
+**Minimum:**
+- Any modern web browser (for HTML5 version)
+- OR Godot 4.5+ (to run/develop locally)
+
+**Development:**
+- Godot 4.5.1+
+- Python 3.8+ (for animation scripts)
+- Pillow, OpenCV (Python packages)
+
+## 🤝 Contributing
+
+We welcome contributions! To get started:
+
+1. **Fork** the repository
+2. **Create a branch**: `git checkout -b feature/my-feature`
+3. **Make your changes** and test locally
+4. **Commit**: `git commit -am "Add feature X"`
+5. **Push**: `git push origin feature/my-feature`
+6. **Open a Pull Request**
+
+### Ideas to Help With
+
+- 🎨 Sprite art improvements (bosses, backgrounds, UI)
+- 🎵 Sound effects and background music
+- 🕹️ Level 2–7 boss AI refinement
+- 🧩 Level 2–7 mechanic implementation
+- 🐛 Bug fixes and polish
+- 📝 Documentation improvements
+
+## 📄 License
+
+[License to be determined — likely MIT or CC-BY]
+
+## 👏 Credits
+
+**Developed by** divisCorp  
+**Powered by** [Godot Engine](https://godotengine.org)  
+**Inspired by** LDS Church Restoration History
+
+---
+
+## 📚 More Info
+
+- **Gameplay Guide**: See [Controls](#-gameplay) above
+- **Development Setup**: See [BUILDING.md](BUILDING.md)
+- **Legacy Docs**: See [README.old.md](README.old.md) _(original development notes)_
+
+**Have questions?** Open an [Issue](https://github.com/divisCorp/SeerStone/issues) or check [BUILDING.md](BUILDING.md).
+
+---
+
+_Last Updated: December 2025_  
+_Version: 1.0 (Release Ready)_
 

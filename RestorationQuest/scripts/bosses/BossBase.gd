@@ -34,6 +34,18 @@ func _on_hit(damage:int):
 func die():
 	print("*Boss is defeated!*")
 	_death_animation()
+	_show_level_complete()
+
+func _show_level_complete():
+	# Trigger level complete screen
+	var level = get_tree().current_scene
+	if level:
+		var ui_layer = level.get_node_or_null("UILayer")
+		if ui_layer:
+			var complete = ui_layer.get_child(1) if ui_layer.get_child_count() > 1 else null
+			if complete and complete.has_method("show_level_complete"):
+				var level_id = level.get("level_id") if level.has_meta("level_id") else 1
+				complete.show_level_complete(level_id)
 
 func _death_animation():
 	# simple death: shrink and fade
