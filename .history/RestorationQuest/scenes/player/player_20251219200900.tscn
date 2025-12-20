@@ -1,0 +1,47 @@
+[gd_scene load_steps=2 format=3 uid="uid://cyb7140avswgs"]
+
+[ext_resource type="Script" path="res://scenes/player/player.gd" id="1_4flbx"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_onrkg"]
+size = Vector2(24, 32)
+
+[node name="Player" type="CharacterBody2D"]
+script = ExtResource("1_4flbx")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+scale = Vector2(1, 1)
+position = Vector2(0, 0)
+offset = Vector2(0, -32)
+
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_onrkg")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="FaithBar" type="ProgressBar" parent="CanvasLayer"]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.25
+anchor_bottom = 0.08
+offset_left = 10.0
+offset_top = 10.0
+offset_right = -10.0
+offset_bottom = -10.0
+min_value = 0.0
+max_value = 100.0
+value = 100.0
+custom_minimum_size = Vector2(200, 24)
+theme_override_font_sizes/font_size = 14
+theme_override_colors/fill = Color(1.0, 0.85, 0.0, 1.0)
+theme_override_colors/background = Color(0.2, 0.2, 0.2, 1.0)
+
+[node name="FaithLabel" type="Label" parent="CanvasLayer"]
+anchor_left = 0.0
+anchor_top = 0.0
+anchor_right = 0.25
+anchor_bottom = 0.08
+offset_left = 10.0
+offset_top = 10.0
+text = "FAITH"
+theme_override_font_sizes/font_size = 14
