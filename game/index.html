@@ -1,1 +1,68 @@
-<!DOCTYPE html><html><head><title>SeerStone Prototype</title></head><body><h1>SeerStone: Joseph's Journey</h1><p>Loading Twine prototype...</p><script>alert('Twine prototype placeholder - full version coming soon!');</script></body></html>
+<!DOCTYPE html>
+<html>
+<head>
+<title>SeerStone: Joseph's Journey - Interactive Prototype</title>
+<style>
+body { font-family: Georgia, serif; background: #f5f0e6; color: #3c2f2f; line-height: 1.7; max-width: 820px; margin: 40px auto; padding: 20px; }
+h1 { color: #8b5a2b; text-align: center; }
+.passage { background: #fffdf7; border: 2px solid #d4b38a; padding: 30px; margin: 25px 0; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+a.choice { display: block; margin: 12px 0; padding: 16px; background: #e8d9c0; border-left: 6px solid #8b5a2b; text-decoration: none; color: inherit; border-radius: 4px; }
+a.choice:hover { background: #d4b38a; transform: translateX(8px); }
+.faith-bar { position: fixed; top: 15px; right: 20px; background: #8b5a2b; color: white; padding: 10px 20px; border-radius: 30px; font-weight: bold; box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+</style>
+</head>
+<body>
+<div class="faith-bar">Faith: <span id="faithLevel">40</span>/100</div>
+
+<h1>SeerStone: Joseph's Journey</h1>
+
+<div class="passage">
+:: Start
+<p>It is 1820. Religious confusion abounds in Palmyra, New York. As a young seeker of truth, you feel drawn to the woods.</p>
+[[Walk to the Sacred Grove -> Sacred Grove]]
+</div>
+
+<script>
+  let faith = 40;
+  function updateFaith(delta) {
+    faith = Math.max(0, Math.min(100, faith + delta));
+    document.getElementById('faithLevel').textContent = faith;
+  }
+</script>
+
+:: Sacred Grove
+<div class="passage">
+<p>The Sacred Grove is quiet and beautiful. You kneel in prayer, asking which church is right.</p>
+[[A brilliant pillar of light appears -> First Vision]]
+</div>
+
+:: First Vision
+<div class="passage">
+<p>Two glorious Personages stand before you. The Father says, "This is My Beloved Son. Hear Him!"</p>
+(set: $faith += 25) <script>updateFaith(25);</script>
+[[Ask about the churches -> Vision Response]]
+</div>
+
+:: Vision Response
+<div class="passage">
+<p>"None of the churches on the earth at this time are correct. Their creeds are an abomination in My sight."</p>
+[[Tell your family what you saw -> Journal]]
+[[Keep it secret for now -> Journal]]
+</div>
+
+:: Journal
+<div class="passage">
+<p>You record your experience. Your faith has grown stronger.</p>
+<p>Current Faith: [[$faith]]/100</p>
+[[Continue to the next chapter (Hill Cumorah) -> End]]
+</div>
+
+:: End
+<div class="passage">
+<h2>End of Prototype</h2>
+<p>Thank you for playing! This is the beginning of Joseph Smith's remarkable journey of restoration.</p>
+<p>More scenes (Moroni, plates, translation, Church organization) can be added quickly.</p>
+[[Play again from the start -> Start]]
+</div>
+</body>
+</html>
