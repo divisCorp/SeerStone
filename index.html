@@ -3,166 +3,133 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SeerStone Quest • Professional Edition</title>
+    <title>SeerStone Quest • Professional Arcade</title>
     <style>
-        body { margin:0; background:#0b1f0b; overflow:hidden; font-family:'Courier New', monospace; color:#f4d9a3; }
-        canvas { display:block; margin:0 auto; image-rendering:pixelated; border:6px solid #f4d9a3; box-shadow: 0 0 30px #f4d9a3; }
-        #ui { position:absolute; top:15px; left:15px; font-size:22px; background:rgba(0,0,0,0.6); padding:10px 20px; border-radius:12px; z-index:100; box-shadow: 0 0 15px #f4d9a3; }
-        #title { position:absolute; top:20px; left:50%; transform:translateX(-50%); font-size:28px; font-weight:bold; text-shadow: 0 0 10px #f4d9a3; z-index:100; }
+        body { margin:0; padding:0; background:#0b1f0b; overflow:hidden; font-family:Arial; color:#fff; }
+        canvas { display:block; margin:0 auto; image-rendering:pixelated; box-shadow: 0 0 40px #f4d9a3; }
+        #ui { position:absolute; top:12px; left:12px; font-size:22px; background:rgba(11,31,11,0.85); padding:8px 18px; border-radius:12px; z-index:100; box-shadow:0 0 15px #f4d9a3; }
     </style>
 </head>
 <body>
-    <div id="title">SeerStone Quest</div>
-    <div id="ui">Faith: <span id="faith">40</span> | Level 1: Sacred Grove</div>
-    <canvas id="game" width="960" height="540"></canvas>
+    <div id="ui">Faith: <span id="faith">45</span> | Level 1: Sacred Grove</div>
+    <canvas id="game" width="1024" height="576"></canvas>
 
     <script>
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
-        let faith = 40;
-        let player = {x:100, y:350, w:36, h:56, vx:0, vy:0, onGround:false, frame:0, direction:1};
+        let faith = 45;
+        let cameraX = 0;
+        let player = { x: 120, y: 320, vx: 0, vy: 0, width: 38, height: 54, onGround: false, frame: 0, facing: 1 };
         let keys = {};
-        let particles = [];
-        let enemies = [{x:550, y:320, w:32, h:32, vx:-2}];
 
         window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
         window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
 
-        function createParticle(x, y) {
-            particles.push({x, y, vx: Math.random()*6-3, vy: Math.random()* -6 -2, life: 40, color: '#ffeeaa'});
-        }
+        const platforms = [
+            {x:0, y:480, w:2500, h:96}, // long ground
+            {x:280, y:380, w:260, h:20},
+            {x:620, y:290, w:200, h:20},
+            {x:920, y:360, w:180, h:20},
+            {x:1250, y:240, w:220, h:20},
+            {x:1600, y:320, w:160, h:20}
+        ];
 
         function update() {
-            // Player movement
             player.vx *= 0.85;
-            if (keys['arrowleft'] || keys['a']) { player.vx -= 1.2; player.direction = -1; }
-            if (keys['arrowright'] || keys['d']) { player.vx += 1.2; player.direction = 1; }
+            if (keys['arrowleft'] || keys['a']) { player.vx -= 1.5; player.facing = -1; }
+            if (keys['arrowright'] || keys['d']) { player.vx += 1.5; player.facing = 1; }
             if ((keys[' '] || keys['arrowup'] || keys['w']) && player.onGround) {
-                player.vy = -19;
+                player.vy = -18.5;
                 player.onGround = false;
             }
 
             player.x += player.vx;
             player.y += player.vy;
-            player.vy += 0.85; // gravity
+            player.vy += 0.92; // gravity
 
-            // Ground
-            if (player.y > 420) { player.y = 420; player.vy = 0; player.onGround = true; }
-
-            // Platforms
-            const platforms = [{x:220, y:340, w:220, h:20}, {x:520, y:260, w:180, h:20}, {x:760, y:340, w:140, h:20}];
+            // Platform collisions
+            player.onGround = false;
             for (let p of platforms) {
-                if (player.x + player.w > p.x && player.x < p.x + p.w && player.y + player.h > p.y && player.y + player.h < p.y + p.h + 20 && player.vy > 0) {
-                    player.y = p.y - player.h;
+                if (player.x + player.width > p.x && player.x < p.x + p.w &&
+                    player.y + player.height > p.y && player.y + player.height - player.vy <= p.y && player.vy >= 0) {
+                    player.y = p.y - player.height;
                     player.vy = 0;
                     player.onGround = true;
                 }
             }
 
             // Prayer power-up
-            if (keys['z']) {
-                faith = Math.min(100, faith + 1.5);
-                if (Math.random() < 0.4) createParticle(player.x + 18, player.y + 20);
-            }
+            if (keys['z']) faith = Math.min(100, faith + 1.8);
 
-            // Boundaries
-            player.x = Math.max(20, Math.min(900, player.x));
+            // Camera follows player (Mario style)
+            cameraX = Math.max(0, player.x - 420);
+
             document.getElementById('faith').textContent = Math.floor(faith);
-
-            player.frame = (player.frame + 0.15) % 4;
-
-            // Update enemies
-            enemies.forEach(e => {
-                e.x += e.vx;
-                if (e.x < 400 || e.x > 700) e.vx *= -1;
-            });
+            player.frame += 0.22;
         }
 
         function draw() {
-            // Background
-            ctx.fillStyle = '#0a2a1a';
-            ctx.fillRect(0,0,960,540);
+            // Sky
+            ctx.fillStyle = '#0f2a4a';
+            ctx.fillRect(0, 0, 1024, 576);
 
-            // Sky gradient
-            const grad = ctx.createLinearGradient(0,0,0,300);
-            grad.addColorStop(0, '#112211');
-            grad.addColorStop(1, '#0a3d1f');
-            ctx.fillStyle = grad;
-            ctx.fillRect(0,0,960,400);
+            // Parallax distant trees/hills
+            ctx.fillStyle = '#1a3d2a';
+            ctx.fillRect(0 - cameraX*0.3, 320, 3000, 160);
 
             // Ground
             ctx.fillStyle = '#5c4033';
-            ctx.fillRect(0,460,960,80);
+            ctx.fillRect(0 - cameraX, 480, 2500, 96);
 
             // Platforms
-            ctx.fillStyle = '#8b5a2b';
-            ctx.fillRect(220,340,220,20);
-            ctx.fillRect(520,260,180,20);
-            ctx.fillRect(760,340,140,20);
+            ctx.fillStyle = '#a07040';
+            for (let p of platforms) {
+                ctx.fillRect(p.x - cameraX, p.y, p.w, p.h);
+            }
 
             // Vines
-            ctx.fillStyle = '#0a5';
-            ctx.fillRect(180,140,18,340);
-            ctx.fillRect(680,100,18,380);
+            ctx.strokeStyle = '#0a5';
+            ctx.lineWidth = 24;
+            ctx.beginPath(); ctx.moveTo(340 - cameraX, 80); ctx.quadraticCurveTo(355 - cameraX, 240, 315 - cameraX, 520); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(1050 - cameraX, 60); ctx.quadraticCurveTo(1070 - cameraX, 220, 1030 - cameraX, 520); ctx.stroke();
 
-            // Joseph Smith (professional sprite)
+            // Joseph Smith
+            const px = player.x - cameraX;
+            const py = player.y;
             ctx.save();
-            ctx.translate(player.x + player.w/2, player.y + player.h/2);
-            ctx.scale(player.direction, 1);
-            ctx.translate(-player.w/2, -player.h/2);
+            ctx.translate(px + 19, py + 27);
+            ctx.scale(player.facing, 1);
 
             // Coat
             ctx.fillStyle = '#3d2b1f';
-            ctx.fillRect(4,12,28,44);
-            // Head
+            ctx.fillRect(-15, -6, 30, 42);
+            // Skin/head
             ctx.fillStyle = '#f4d9a3';
-            ctx.fillRect(10,0,16,22);
+            ctx.fillRect(-12, -26, 24, 24);
             // Hat
             ctx.fillStyle = '#2a2a2a';
-            ctx.fillRect(6,-6,24,12);
+            ctx.fillRect(-19, -34, 38, 13);
             // Boots
             ctx.fillStyle = '#2a2a2a';
-            ctx.fillRect(8,48,10,8);
-            ctx.fillRect(18,48,10,8);
+            ctx.fillRect(-15, 32, 12, 9);
+            ctx.fillRect(4, 32, 12, 9);
 
             ctx.restore();
 
             // Faith Orbs
-            ctx.fillStyle = '#ffee77';
-            ctx.shadowBlur = 20;
-            ctx.shadowColor = '#ffee77';
-            ctx.beginPath(); ctx.arc(380,220,18,0,Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(720,180,18,0,Math.PI*2); ctx.fill();
-            ctx.shadowBlur = 0;
-
-            // Pillar of Light
-            ctx.fillStyle = '#ffeecc';
             ctx.shadowBlur = 30;
-            ctx.shadowColor = '#ffeecc';
-            ctx.fillRect(860,80,40,380);
+            ctx.shadowColor = '#ffeeaa';
+            ctx.fillStyle = '#ffeeaa';
+            ctx.beginPath(); ctx.arc(480 - cameraX, 260, 19, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(1150 - cameraX, 200, 19, 0, Math.PI*2); ctx.fill();
             ctx.shadowBlur = 0;
 
-            // Enemies (Doubt Clouds)
-            enemies.forEach(e => {
-                ctx.fillStyle = '#666699';
-                ctx.beginPath(); ctx.arc(e.x+16, e.y+16, 18, 0, Math.PI*2); ctx.fill();
-                ctx.fillStyle = '#ffffff';
-                ctx.font = 'bold 18px Arial';
-                ctx.fillText('?', e.x+10, e.y+26);
-            });
-
-            // Particles
-            for (let i = particles.length-1; i >=0; i--) {
-                let p = particles[i];
-                ctx.globalAlpha = p.life / 40;
-                ctx.fillStyle = p.color;
-                ctx.fillRect(p.x, p.y, 6, 6);
-                p.x += p.vx;
-                p.y += p.vy;
-                p.life--;
-                if (p.life <= 0) particles.splice(i,1);
-            }
-            ctx.globalAlpha = 1;
+            // Pillar of Light (goal)
+            ctx.shadowBlur = 60;
+            ctx.shadowColor = '#ffeecc';
+            ctx.fillStyle = '#ffeecc';
+            ctx.fillRect(1750 - cameraX, 110, 48, 380);
+            ctx.shadowBlur = 0;
         }
 
         function loop() {
@@ -171,14 +138,14 @@
             requestAnimationFrame(loop);
         }
 
-        // Win condition
         setInterval(() => {
-            if (player.x > 830 && faith > 75) {
-                alert("🎉 PROFESSIONAL LEVEL COMPLETE!\n\nYou have witnessed the First Vision in the Sacred Grove.\n\nJoseph\'s faith is strengthened.\n\nNext Level: Hill Cumorah coming soon!");
-                player.x = 100;
-                faith = 60;
+            if (player.x > 1720 && faith > 78) {
+                alert("🎉 Level 1 Complete!\n\nYou reached the Pillar of Light in the Sacred Grove.\n\nJoseph witnessed the First Vision.\n\nFaith greatly strengthened.\n\nLevel 2 - Hill Cumorah coming soon!");
+                player.x = 120;
+                faith = 45;
+                cameraX = 0;
             }
-        }, 300);
+        }, 250);
 
         loop();
     </script>
