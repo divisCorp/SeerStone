@@ -3,16 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SeerStone Quest • Professional Arcade</title>
+    <title>SeerStone Quest • Professional Edition</title>
     <style>
         body { margin:0; padding:0; background:#0b1f0b; overflow:hidden; font-family:Arial; color:#fff; }
-        canvas { display:block; margin:0 auto; image-rendering:pixelated; box-shadow: 0 0 40px #f4d9a3; }
-        #ui { position:absolute; top:12px; left:12px; font-size:22px; background:rgba(11,31,11,0.85); padding:8px 18px; border-radius:12px; z-index:100; box-shadow:0 0 15px #f4d9a3; }
+        canvas { display:block; margin:0 auto; image-rendering:pixelated; }
+        #ui { position:absolute; top:12px; left:12px; font-size:22px; background:rgba(0,0,0,0.75); padding:10px 20px; border-radius:12px; z-index:10; box-shadow:0 0 20px #f4d9a3; }
+        #message { position:absolute; top:50%; left:50%; transform:translate(-50%, -50%); background:rgba(0,0,0,0.9); padding:30px 50px; border-radius:20px; text-align:center; font-size:28px; display:none; z-index:100; }
     </style>
 </head>
 <body>
     <div id="ui">Faith: <span id="faith">45</span> | Level 1: Sacred Grove</div>
     <canvas id="game" width="1024" height="576"></canvas>
+    <div id="message"></div>
 
     <script>
         const canvas = document.getElementById('game');
@@ -21,33 +23,35 @@
         let cameraX = 0;
         let player = { x: 120, y: 320, vx: 0, vy: 0, width: 38, height: 54, onGround: false, frame: 0, facing: 1 };
         let keys = {};
+        let enemies = [{x: 680, y: 280, vx: -1.5, width: 45, height: 45, alive: true}];
+        let particles = [];
 
         window.addEventListener('keydown', e => keys[e.key.toLowerCase()] = true);
         window.addEventListener('keyup', e => keys[e.key.toLowerCase()] = false);
 
         const platforms = [
-            {x:0, y:480, w:2500, h:96}, // long ground
+            {x:0, y:480, w:2800, h:96},
             {x:280, y:380, w:260, h:20},
             {x:620, y:290, w:200, h:20},
             {x:920, y:360, w:180, h:20},
             {x:1250, y:240, w:220, h:20},
-            {x:1600, y:320, w:160, h:20}
+            {x:1650, y:320, w:160, h:20}
         ];
+
+        function createParticle(x, y, color = '#ffeeaa') {
+            particles.push({x, y, vx: Math.random()*8-4, vy: Math.random()*-6-3, life: 45, color});
+        }
 
         function update() {
             player.vx *= 0.85;
             if (keys['arrowleft'] || keys['a']) { player.vx -= 1.5; player.facing = -1; }
             if (keys['arrowright'] || keys['d']) { player.vx += 1.5; player.facing = 1; }
-            if ((keys[' '] || keys['arrowup'] || keys['w']) && player.onGround) {
-                player.vy = -18.5;
-                player.onGround = false;
-            }
+            if ((keys[' '] || keys['arrowup'] || keys['w']) && player.onGround) { player.vy = -18.5; player.onGround = false; }
 
             player.x += player.vx;
             player.y += player.vy;
-            player.vy += 0.92; // gravity
+            player.vy += 0.92;
 
-            // Platform collisions
             player.onGround = false;
             for (let p of platforms) {
                 if (player.x + player.width > p.x && player.x < p.x + p.w &&
@@ -59,27 +63,44 @@
             }
 
             // Prayer power-up
-            if (keys['z']) faith = Math.min(100, faith + 1.8);
+            let praying = keys['z'];
+            if (praying) {
+                faith = Math.min(100, faith + 1.8);
+                if (Math.random() > 0.5) createParticle(player.x + 19, player.y + 20);
+            }
 
-            // Camera follows player (Mario style)
+            // Update enemies (Black Doubt Cloud)
+            for (let e of enemies) {
+                if (e.alive) {
+                    e.x += e.vx;
+                    // Bounce on edges
+                    if (e.x < 500 || e.x > 1100) e.vx *= -1;
+                    // Prayer defeats cloud
+                    if (praying && Math.abs(e.x - player.x) < 120 && Math.abs(e.y - player.y) < 120) {
+                        e.alive = false;
+                        for (let i = 0; i < 25; i++) createParticle(e.x + 20, e.y + 20, '#8888ff');
+                    }
+                }
+            }
+
             cameraX = Math.max(0, player.x - 420);
 
             document.getElementById('faith').textContent = Math.floor(faith);
-            player.frame += 0.22;
+            player.frame += 0.25;
         }
 
         function draw() {
             // Sky
-            ctx.fillStyle = '#0f2a4a';
+            ctx.fillStyle = '#0b2a4a';
             ctx.fillRect(0, 0, 1024, 576);
 
-            // Parallax distant trees/hills
-            ctx.fillStyle = '#1a3d2a';
+            // Parallax background
+            ctx.fillStyle = '#1e4a2a';
             ctx.fillRect(0 - cameraX*0.3, 320, 3000, 160);
 
             // Ground
             ctx.fillStyle = '#5c4033';
-            ctx.fillRect(0 - cameraX, 480, 2500, 96);
+            ctx.fillRect(0 - cameraX, 480, 2800, 96);
 
             // Platforms
             ctx.fillStyle = '#a07040';
@@ -93,7 +114,7 @@
             ctx.beginPath(); ctx.moveTo(340 - cameraX, 80); ctx.quadraticCurveTo(355 - cameraX, 240, 315 - cameraX, 520); ctx.stroke();
             ctx.beginPath(); ctx.moveTo(1050 - cameraX, 60); ctx.quadraticCurveTo(1070 - cameraX, 220, 1030 - cameraX, 520); ctx.stroke();
 
-            // Joseph Smith
+            // Joseph Smith (from your image style)
             const px = player.x - cameraX;
             const py = player.y;
             ctx.save();
@@ -101,34 +122,47 @@
             ctx.scale(player.facing, 1);
 
             // Coat
-            ctx.fillStyle = '#3d2b1f';
-            ctx.fillRect(-15, -6, 30, 42);
-            // Skin/head
+            ctx.fillStyle = '#2c3a5e';
+            ctx.fillRect(-16, -6, 32, 40);
+            // Skin
             ctx.fillStyle = '#f4d9a3';
-            ctx.fillRect(-12, -26, 24, 24);
+            ctx.fillRect(-13, -26, 26, 24);
             // Hat
-            ctx.fillStyle = '#2a2a2a';
-            ctx.fillRect(-19, -34, 38, 13);
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(-20, -36, 40, 14);
             // Boots
-            ctx.fillStyle = '#2a2a2a';
-            ctx.fillRect(-15, 32, 12, 9);
-            ctx.fillRect(4, 32, 12, 9);
+            ctx.fillStyle = '#3d2b1f';
+            ctx.fillRect(-15, 32, 13, 10);
+            ctx.fillRect(3, 32, 13, 10);
 
             ctx.restore();
+
+            // Black Doubt Cloud enemy
+            for (let e of enemies) {
+                if (e.alive) {
+                    ctx.fillStyle = '#333355';
+                    ctx.shadowBlur = 25;
+                    ctx.shadowColor = '#555588';
+                    ctx.beginPath();
+                    ctx.ellipse(e.x - cameraX + 22, e.y + 22, 28, 22, 0, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.shadowBlur = 0;
+                }
+            }
 
             // Faith Orbs
             ctx.shadowBlur = 30;
             ctx.shadowColor = '#ffeeaa';
             ctx.fillStyle = '#ffeeaa';
-            ctx.beginPath(); ctx.arc(480 - cameraX, 260, 19, 0, Math.PI*2); ctx.fill();
-            ctx.beginPath(); ctx.arc(1150 - cameraX, 200, 19, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(520 - cameraX, 260, 19, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(1180 - cameraX, 190, 19, 0, Math.PI*2); ctx.fill();
             ctx.shadowBlur = 0;
 
-            // Pillar of Light (goal)
-            ctx.shadowBlur = 60;
+            // Pillar of Light
+            ctx.shadowBlur = 65;
             ctx.shadowColor = '#ffeecc';
             ctx.fillStyle = '#ffeecc';
-            ctx.fillRect(1750 - cameraX, 110, 48, 380);
+            ctx.fillRect(1780 - cameraX, 110, 48, 380);
             ctx.shadowBlur = 0;
         }
 
@@ -138,12 +172,15 @@
             requestAnimationFrame(loop);
         }
 
+        // Win condition - First Vision
         setInterval(() => {
-            if (player.x > 1720 && faith > 78) {
-                alert("🎉 Level 1 Complete!\n\nYou reached the Pillar of Light in the Sacred Grove.\n\nJoseph witnessed the First Vision.\n\nFaith greatly strengthened.\n\nLevel 2 - Hill Cumorah coming soon!");
-                player.x = 120;
-                faith = 45;
-                cameraX = 0;
+            if (player.x > 1740 && faith > 78) {
+                const msg = document.getElementById('message');
+                msg.style.display = 'block';
+                msg.innerHTML = `<h2 style="color:#ffeecc;margin:0 0 20px 0">The First Vision</h2>
+                <p style="font-size:24px;line-height:1.4">A pillar of light descends...<br><br>
+                <strong>The Father says:</strong><br>"This is My Beloved Son. Hear Him!"</p>
+                <button onclick="this.parentElement.style.display='none';player.x=120;faith=45;" style="margin-top:20px;padding:12px 30px;font-size:18px;background:#f4d9a3;color:#1a2a4a;border:none;border-radius:8px;cursor:pointer">Continue Journey</button>`;
             }
         }, 250);
 
